@@ -26,6 +26,7 @@ namespace ServerManager.Utility
         private Server Server { get; set; }
         public ushort Port { get; private set; }
         public Queue<string> Commands { get; set; }
+        public bool ListenConnection { get; set; }
 
         Thread listen;
 
@@ -35,17 +36,10 @@ namespace ServerManager.Utility
             Password = password;
             Port = port;
             Server = server;
-        }
 
-        public void StartListening()
-        {
+            ListenConnection = Program.Config.Values.Remote.Activated;
             listen = new Thread(Listen);
             listen.Start();
-        }
-
-        public void StopListening()
-        {
-            listen.Abort();
         }
 
         public void Listen()
@@ -57,6 +51,8 @@ namespace ServerManager.Utility
             {
                 using (Socket socket = tl.AcceptSocket())
                 {
+                    if (!ListenConnection) continue;
+
                     using (NetworkStream ns = new NetworkStream(socket))
                     {
                         byte[] buffer = new byte[1024];
@@ -104,7 +100,7 @@ namespace ServerManager.Utility
                 else if (cmd == "autorestartoff")
                     Program.Config.Values.Connection.AutoRestart = false;
                 else if (cmd == "remoteoff")
-                    Server.Remote.StopListening();
+                    Server.Remote.ListenConnection = false;
                 else if (cmd == "exit")
                     Environment.Exit(1);
                 else if (cmd == "status")

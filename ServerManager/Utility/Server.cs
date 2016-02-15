@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ServerManager.Utility
 {
-    class Server
+    class Server : IDisposable
     {
         public IntPtr Handle { get { return IsAlive ? Process.MainWindowHandle : IntPtr.Zero; } }
         public bool IsAlive { get; set; }
@@ -21,6 +21,7 @@ namespace ServerManager.Utility
         public Process Process { get; private set; }
         public ServerData Data { get; private set; }
         public RemoteControl Remote { get; private set; }
+        public Statistics Stats { get; private set; }
 
         public bool Responding
         {
@@ -32,12 +33,13 @@ namespace ServerManager.Utility
             }
         }
 
-        Thread waitidle;
+        Thread waitidle, drawgraph;
 
         public Server()
         {
             Process = new Process();
             Process.EnableRaisingEvents = true;
+            Process.Exited += Process_Exited;
             if (File.Exists(Program.Config.Values.Connection.ServerPath))
                 Process.StartInfo.FileName = Program.Config.Values.Connection.ServerPath;
             Process.StartInfo.Arguments = Program.Config.Values.Connection.ToString();
@@ -49,11 +51,19 @@ namespace ServerManager.Utility
             Remote = new RemoteControl(Program.Config.Values.Remote.Password, Program.Config.Values.Remote.Port, this);
             Data = new ServerData(new IPEndPoint(IPAddress.Parse(Program.Config.Values.Connection.IP), Program.Config.Values.Connection.Port));
 
-            if (Program.Config.Values.Remote.Activated)
-                Remote.StartListening();
-
             if (Program.Config.Values.StartServerAtStartup)
                 Start();
+
+            if (Program.Config.Values.Stats.Activated)
+            {
+                drawgraph = new Thread(DrawGraph);
+                drawgraph.Start();
+
+                Stats = new Statistics();
+            }
+
+            waitidle = new Thread(WaitIdle);
+            waitidle.Start();
         }
 
         private void Process_Exited(object sender, EventArgs e)
@@ -70,11 +80,6 @@ namespace ServerManager.Utility
 
             Process.Start();
             IsAlive = true;
-
-            if (waitidle != null && waitidle.IsAlive)
-                waitidle.Abort();
-            waitidle = new Thread(WaitIdle);
-            waitidle.Start();
         }
 
         public void Start()
@@ -82,26 +87,27 @@ namespace ServerManager.Utility
             if (IsAlive)
                 return;
 
-            Process.Exited += Process_Exited;
             Process.Start();
-
-            if (waitidle != null && waitidle.IsAlive)
-                waitidle.Abort();
-
-            waitidle = new Thread(WaitIdle);
-            waitidle.Start();
-
             IsAlive = true;
         }
 
         private void WaitIdle()
         {
-            Process.WaitForInputIdle();
-            if (Process.HasExited)
-                return;
+            while (Thread.CurrentThread.IsAlive)
+            {
+                while (!IsAlive) { Thread.Sleep(100); }
 
-            IsReady = true;
-            Data.Refresh();
+                Process.WaitForInputIdle();
+                if (Process.HasExited)
+                {
+                    IsAlive = false;
+                    IsReady = false;
+                    continue;
+                }
+
+                IsReady = true;
+                Data.Refresh();
+            }
         }
 
         public void Stop()
@@ -115,7 +121,7 @@ namespace ServerManager.Utility
             if (waitidle != null && waitidle.IsAlive)
                 waitidle.Abort();
 
-            Process.Exited -= Process_Exited;
+            Stopping = true;
             if (!Process.HasExited)
                 Process.Kill();
         }
@@ -124,6 +130,22 @@ namespace ServerManager.Utility
         {
             Stop();
             Start();
+        }
+
+        public void DrawGraph()
+        {
+            while (Thread.CurrentThread.IsAlive)
+            {
+                Thread.Sleep((int)Program.Config.Values.Stats.MinuteDrawSample * 60 * 1000);
+                while (!IsReady) { Thread.Sleep(1000); }
+                Stats.AddPoint(DateTime.Now, Data.Info.Players);
+            }
+        }
+
+        public void Dispose()
+        {
+            Process.Exited -= Process_Exited;
+            waitidle.Abort();
         }
     }
 }

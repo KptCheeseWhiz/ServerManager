@@ -10,3 +10,16 @@ C:\Users\Vincent\Documents\c#\ServerManager\obj\Debug\ServerManager.exe
 C:\Users\Vincent\Documents\c#\ServerManager\obj\Debug\ServerManager.pdb
 C:\Users\Vincent\Documents\c#\ServerManager\obj\Debug\ServerManager.csprojResolveAssemblyReference.cache
 C:\Users\Vincent\Documents\c#\ServerManager\obj\Debug\ServerManager.Forms.Creation.resources
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\bin\Debug\ServerManager.exe.config
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\bin\Debug\ServerManager.exe
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\bin\Debug\ServerManager.pdb
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\bin\Debug\Steam.Query.dll
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\obj\Debug\ServerManager.Forms.Creation.resources
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\obj\Debug\ServerManager.Properties.Resources.resources
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\obj\Debug\ServerManager.csproj.GenerateResource.Cache
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\obj\Debug\ServerManager.exe
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\obj\Debug\ServerManager.pdb
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\bin\Debug\ServerManager.exe.CodeAnalysisLog.xml
+C:\Users\Vincent\Documents\C#\ServerManager\ServerManager\bin\Debug\ServerManager.exe.lastcodeanalysissucceeded

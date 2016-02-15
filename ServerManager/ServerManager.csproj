@@ -75,6 +75,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utility\Statistics.cs" />
     <Compile Include="Utility\RemoteControl.cs" />
     <Compile Include="Utility\Server.cs" />
     <Compile Include="Utility\Sendkeys.cs" />

@@ -15,6 +15,7 @@ namespace ServerManager
     {
         public string Path { get; set; }
         private Data values = null;
+
         public Data Values
         {
             get
@@ -97,6 +98,7 @@ namespace ServerManager
             public bool StartAtWindowsStartup { get; set; }
             public bool StartServerAtStartup { get; set; }
             public byte RefreshRate { get; set; }
+            public Statistics Stats { get; set; }
             public RemoteControl Remote { get; set; }
             public ServerConnection Connection { get; set; }
 
@@ -104,7 +106,19 @@ namespace ServerManager
             {
                 if (Connection == null || Connection.Arguments == null || Remote == null)
                     return false;
-                return RefreshRate > 0 && Remote.Check() && Connection.Check() && Connection.Arguments.Check();
+                return RefreshRate > 0 && Stats.Check() && Remote.Check() && Connection.Check() && Connection.Arguments.Check();
+            }
+
+            [Serializable]
+            public class Statistics
+            {
+                public bool Activated { get; set; }
+                public uint MinuteDrawSample { get; set; }
+
+                public bool Check()
+                {
+                    return MinuteDrawSample > 0;
+                }
             }
 
             [Serializable]

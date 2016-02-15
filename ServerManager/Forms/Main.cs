@@ -90,10 +90,7 @@ namespace ServerManager.Forms
             remote.Click += (ob, ev) =>
             {
                 Program.Config.Values.Remote.Activated = remote.Checked;
-                if (remote.Checked)
-                    Server.Remote.StartListening();
-                else
-                    Server.Remote.StopListening();
+                Server.Remote.ListenConnection = remote.Checked;
             };
 
             rebootonfail.Text = "Redémarrer en cas d'échec";
@@ -180,6 +177,7 @@ namespace ServerManager.Forms
                         Dispose();
                     else if (dr == DialogResult.Cancel)
                         return;
+                    Server.Stats.Save();
                 }
 
                 Program.Config.Save();
@@ -290,6 +288,7 @@ namespace ServerManager.Forms
             DestroyIcon(connected_wait.Handle);
             DestroyIcon(connected.Handle);
             DestroyIcon(disconnected.Handle);
+            
             base.Dispose(disposing);
         }
 
